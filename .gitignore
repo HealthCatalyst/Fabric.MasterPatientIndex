@@ -3,3 +3,7 @@
 ################################################################################
 
 /MasterPatientIndex/bin/Debug/netstandard2.0
+/MasterPatientIndex/obj
+/MPIConsole/MPIConsole/bin/Debug
+/MPIConsole/MPIConsole/obj
+/MPIConsole/packages

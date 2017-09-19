@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPIConsole", "MPIConsole\MPIConsole.csproj", "{B5E0AA9F-9182-43CF-AF40-0C71EDB06D73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterPatientIndex", "..\MasterPatientIndex\MasterPatientIndex.csproj", "{6EC33EEE-295A-448F-8B96-5666E20862B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5E0AA9F-9182-43CF-AF40-0C71EDB06D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E0AA9F-9182-43CF-AF40-0C71EDB06D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E0AA9F-9182-43CF-AF40-0C71EDB06D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E0AA9F-9182-43CF-AF40-0C71EDB06D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EC33EEE-295A-448F-8B96-5666E20862B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EC33EEE-295A-448F-8B96-5666E20862B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EC33EEE-295A-448F-8B96-5666E20862B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EC33EEE-295A-448F-8B96-5666E20862B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C054EAC8-E088-4D1F-AEF9-2D425826C4A2}
+	EndGlobalSection
+EndGlobal
