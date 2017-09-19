@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MasterPatientIndex.Structures;
 
 namespace MasterPatientIndex.ProbabilisticMPI
 {
@@ -27,7 +28,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 : new List<MPIMatchRecord>();
         }
      
-        public IList<MasterPatientIndexItem> GetCandidateBlock(SearchVector searchVector)
+        public IList<SearchVector> GetCandidateBlock(SearchVector searchVector)
         {
             //TODO: use redis intersect functionality to combine blocking identifiers? 
             //do we even want to intersect the blocking criteria?  may make more sense
@@ -35,7 +36,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             //intersecting the blocking criteria might be too restrictive
             //for now, assume blocking on lastname only
             
-            var nameIdentifier = searchVector.GetIdentifierByType(MPIIdentifierLookup.LastName);
+            var nameIdentifier = searchVector.GetBlockCandidate();
             var lastName = nameIdentifier != null ? nameIdentifier.Value.ToString() : string.Empty;
 
             //if lastname in search vector is shorter than key, use all characters 

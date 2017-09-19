@@ -16,9 +16,9 @@ namespace MasterPatientIndex.ProbabilisticMPI
         private const string MPIResourcesNamespace = "MasterPatientIndex.Resources";
         private const string IdentifierMatchWeightsFile = "IdentifierMatchWeights.csv";
 
-        private readonly Dictionary<MPIIdentifierLookup, MPIIdentifierWeight> IdentifierMatchWeights =
-            new Dictionary<MPIIdentifierLookup, MPIIdentifierWeight>();
-        private readonly List<KeyValuePair<MPIIdentifierLookup, MPIIdentifierWeight>> BlockingIdentifiers;
+        private readonly Dictionary<string, MPIIdentifierWeight> IdentifierMatchWeights =
+            new Dictionary<string, MPIIdentifierWeight>();
+        private readonly List<KeyValuePair<string, MPIIdentifierWeight>> BlockingIdentifiers;
 
         public ConfigurationEngine()
         {
@@ -31,6 +31,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             
         }
 
+#if(false)
         private void LoadIdentifierMatchWeightsReal()
         {
             //http://en.wikipedia.org/wiki/Record_linkage
@@ -92,6 +93,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 }
             }
         }
+#endif
         private static Stream GetEmbeddedFileStreamFromNamespace(string mappingFileName, string mappingFileNamespace)
         {
             var manifestResourceStream =

@@ -25,7 +25,7 @@ namespace MasterPatientIndexTest
             throw new NotImplementedException();
         }
 
-        public IList<MasterPatientIndexItem> GetMasterPatientIndexRecordsForListOfPatients(List<string> candidateIds)
+        public IList<SearchVector> GetMasterPatientIndexRecordsForListOfPatients(List<string> candidateIds)
         {
             throw new NotImplementedException();
         }

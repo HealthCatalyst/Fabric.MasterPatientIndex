@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MasterPatientIndex.Structures;
 
 namespace MasterPatientIndex.ProbabilisticMPI
 {
@@ -11,12 +12,12 @@ namespace MasterPatientIndex.ProbabilisticMPI
         public MPIIdentifier GetIdentifierByName(string identifierName)
         {
             return Identifiers.FirstOrDefault(v =>
-                v.IdentifierType.ToString().Equals(identifierName, StringComparison.OrdinalIgnoreCase));
+                v.IdentifierName.Equals(identifierName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public MPIIdentifier GetIdentifierByType(MPIIdentifierLookup identifierType)
+        public MPIIdentifier GetBlockCandidate()
         {
-            return Identifiers.FirstOrDefault(v => v.IdentifierType == identifierType);
+            return Identifiers.FirstOrDefault(v => v.IsBlockCandidate);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MasterPatientIndex.Structures;
 using Serilog;
 using Serilog.Core;
 
@@ -22,7 +23,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             _mpiConfiguration = configurationEngine;
         }
 
-        public List<MPIMatchRecord> FindMatches (SearchVector searchVector, IList<MasterPatientIndexItem> candidates)
+        public List<MPIMatchRecord> FindMatches (SearchVector searchVector, IList<SearchVector> candidates)
         {
             if (_mpiTraceEnabled) MPIMatchLogger.Verbose("Compared {0} candidates to {1}", candidates.Count, Describe(searchVector));
 
@@ -67,18 +68,17 @@ namespace MasterPatientIndex.ProbabilisticMPI
             return matchResults;
         }
 
-        private static MPIMatchRecord GetCandidateMatchRecord(SearchVector searchVector, MasterPatientIndexItem candidate)
+        private static MPIMatchRecord GetCandidateMatchRecord(SearchVector searchVector, SearchVector candidateVector)
         {
             //get list of identifier values for candidate
-            var candidateVector = MasterPatientIndexItem.ToVector(candidate);
          
             //compare every element search vector to corresponding element in candidate vector
             var candidateMatchScores = searchVector.Identifiers.Select(sve =>
-                GetIdentifierScore(sve, candidateVector.FirstOrDefault(cve => cve.IdentifierType == sve.IdentifierType)))
+                GetIdentifierScore(sve, candidateVector.GetIdentifierByName(sve.IdentifierName)))
                 .ToList();
             return new MPIMatchRecord
             {
-                MatchedAcuperaId = candidate.AcuperaId,
+                //TODO: MatchedAcuperaId = candidate.AcuperaId,
                 MatchType = "Probabilistic",
                 MatchVector = candidateMatchScores,
             };               
@@ -92,7 +92,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 //can't compare so return 0 (identifier has no bearing on match score)
                 return new MPIIdentifier
                 {
-                    IdentifierType = existing.IdentifierType,
+                    IdentifierName = existing.IdentifierName,
                     Score = 0,
                     Value = existing.Value,
                 };
@@ -102,7 +102,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             //TODO: var weightRecord = _mpiConfiguration.IdentifierMatchWeights.First(w => w.Key.Equals(incoming.Identifier)).Value;
             var weightRecord = new MPIIdentifierWeight
             {
-                Identifier = incoming.IdentifierType.ToString(),
+                Identifier = incoming.IdentifierName,
                 MatchWeight = 1,
                 NonMatchWeight = -1,
             };
@@ -111,7 +111,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             decimal identifierScore;
 
             //use fuzzy matching to determine how similar search vector is to candidate vector
-            var similarityScore = GetSimilarityScore(incoming.IdentifierType, incoming, existing);
+            var similarityScore = GetSimilarityScore(incoming.IdentifierName, incoming, existing);
             if (similarityScore == 0)
             {
                 identifierScore = weightRecord.NonMatchWeight;
@@ -128,7 +128,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
 
             return new MPIIdentifier
             {
-                IdentifierType = existing.IdentifierType,
+                IdentifierName = existing.IdentifierName,
                 Value = existing.Value,
                 Score = identifierScore
             };
@@ -142,7 +142,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
         }
 
         //Min: 0   Max: 1 
-        private static decimal GetSimilarityScore(MPIIdentifierLookup identifier, MPIIdentifier incoming, MPIIdentifier existing)
+        private static decimal GetSimilarityScore(string identifier, MPIIdentifier incoming, MPIIdentifier existing)
         {           
             var incomingValue = incoming.Value;
             var existingValue = existing.Value;
@@ -151,21 +151,15 @@ namespace MasterPatientIndex.ProbabilisticMPI
             if (incomingValue == null || existingValue == null)
                 return 0;
 
-            switch (identifier)
+            switch (incoming.MatchType)
             {
-                case MPIIdentifierLookup.LastName:
-                case MPIIdentifierLookup.FirstName:
-                case MPIIdentifierLookup.SSN:
-                case MPIIdentifierLookup.MRN:
-                case MPIIdentifierLookup.UniversalId:
-                case MPIIdentifierLookup.InsuranceId:
-                case MPIIdentifierLookup.City:
-                case MPIIdentifierLookup.State:
-                case MPIIdentifierLookup.PostalCode:
+                case MatchType.StringMatch:
                     return CompareStrings(incomingValue, existingValue);
-                case MPIIdentifierLookup.DateOfBirth:
+
+                case MatchType.DateMatch:
                     return CompareDates(incomingValue, existingValue);
-                case MPIIdentifierLookup.Gender:
+
+                case MatchType.GenderMatch:
                     return CompareGenders(incomingValue, existingValue);
                    
             }
