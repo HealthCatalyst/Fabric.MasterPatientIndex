@@ -283,7 +283,6 @@ namespace MasterPatientIndex.ProbabilisticMPI
         public string Identifier { get; set; }
         public decimal MatchWeight { get; set; }
         public decimal NonMatchWeight { get; set; }
-        public bool IsBlockingIdentifier  { get; set; } 
     } 
  
 }

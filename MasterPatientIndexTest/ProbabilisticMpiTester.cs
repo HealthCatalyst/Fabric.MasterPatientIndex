@@ -27,7 +27,9 @@ namespace MasterPatientIndexTest
                 FirstName = "Mark"
             });
 
-            var probabilisticMpiCache = new ProbabilisticMpiCache(mockPatientStore, new MpiConfiguration());
+            var mpiConfiguration = CreateMpiConfiguration();
+
+            var probabilisticMpiCache = new ProbabilisticMpiCache(mockPatientStore, mpiConfiguration);
 
             var testPatient = new MockPatient
             {
@@ -38,6 +40,45 @@ namespace MasterPatientIndexTest
 
             Assert.IsNotNull(mpiMatchRecords);
             Assert.AreEqual(1, mpiMatchRecords.Count);
+
+            // add another match
+            mockPatientStore.Add(new MockPatient
+            {
+                Key = "3",
+                LastName = "Jones",
+                FirstName = "Marm"
+            });
+
+            mpiMatchRecords = probabilisticMpiCache.GetProbabilisticMatches(testPatient.ToSearchVector());
+
+            Assert.IsNotNull(mpiMatchRecords);
+            Assert.AreEqual(2, mpiMatchRecords.Count);
+
+        }
+
+        private static MpiConfiguration CreateMpiConfiguration()
+        {
+            var mpiConfiguration = new MpiConfiguration
+            {
+                HighConfidenceMatchThreshold = (decimal) 1.00,
+                MediumConfidenceMatchThreshold = (decimal) 0.50,
+                StringKeyLength = 3,
+            };
+
+            mpiConfiguration.IdentifierMatchWeights.Add("LastName", new MPIIdentifierWeight
+            {
+                Identifier = "LastName",
+                MatchWeight = 1,
+                NonMatchWeight = -1
+            });
+
+            mpiConfiguration.IdentifierMatchWeights.Add("FirstName", new MPIIdentifierWeight
+            {
+                Identifier = "FirstName",
+                MatchWeight = 1,
+                NonMatchWeight = -1
+            });
+            return mpiConfiguration;
         }
     }
 
@@ -96,9 +137,9 @@ namespace MasterPatientIndexTest
 
     public class MpiConfiguration : IMpiConfiguration
     {
-        public decimal HighConfidenceMatchThreshold => (decimal)1.00;
-        public decimal MediumConfidenceMatchThreshold => (decimal)0.50;
-        public int StringKeyLength => 3;
+        public decimal HighConfidenceMatchThreshold { get; set; }
+        public decimal MediumConfidenceMatchThreshold { get; set; }
+        public int StringKeyLength { get; set; }
         public Dictionary<string, MPIIdentifierWeight> IdentifierMatchWeights => new Dictionary<string, MPIIdentifierWeight>();
     }
 
