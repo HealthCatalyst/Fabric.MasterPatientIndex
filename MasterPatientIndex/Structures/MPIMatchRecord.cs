@@ -8,7 +8,7 @@ namespace MasterPatientIndex.Structures
         public int MatchedAcuperaId { get; set; }
         public string MatchType { get; set; }  //Exact or Probablistic
 
-        public decimal TotalMatchScore
+        public double TotalMatchScore
         {
             get { return MatchVector.Sum(ve => ve.Score); }
         }

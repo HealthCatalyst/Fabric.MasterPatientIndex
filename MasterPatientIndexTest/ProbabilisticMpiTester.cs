@@ -60,8 +60,8 @@ namespace MasterPatientIndexTest
         {
             var mpiConfiguration = new MpiConfiguration
             {
-                HighConfidenceMatchThreshold = (decimal) 1.00,
-                MediumConfidenceMatchThreshold = (decimal) 0.50,
+                HighConfidenceMatchThreshold = 1.00,
+                MediumConfidenceMatchThreshold = 0.50,
                 StringKeyLength = 3,
             };
 
@@ -137,8 +137,8 @@ namespace MasterPatientIndexTest
 
     public class MpiConfiguration : IMpiConfiguration
     {
-        public decimal HighConfidenceMatchThreshold { get; set; }
-        public decimal MediumConfidenceMatchThreshold { get; set; }
+        public double HighConfidenceMatchThreshold { get; set; }
+        public double MediumConfidenceMatchThreshold { get; set; }
         public int StringKeyLength { get; set; }
         public Dictionary<string, MPIIdentifierWeight> IdentifierMatchWeights => new Dictionary<string, MPIIdentifierWeight>();
     }

@@ -108,7 +108,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             };
 
             //default to no match
-            decimal identifierScore;
+            double identifierScore;
 
             //use fuzzy matching to determine how similar search vector is to candidate vector
             var similarityScore = GetSimilarityScore(incoming.IdentifierName, incoming, existing);
@@ -142,7 +142,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
         }
 
         //Min: 0   Max: 1 
-        private static decimal GetSimilarityScore(string identifier, MPIIdentifier incoming, MPIIdentifier existing)
+        private static double GetSimilarityScore(string identifier, MPIIdentifier incoming, MPIIdentifier existing)
         {           
             var incomingValue = incoming.Value;
             var existingValue = existing.Value;
@@ -153,8 +153,8 @@ namespace MasterPatientIndex.ProbabilisticMPI
 
             switch (incoming.MatchType)
             {
-                case MatchType.StringMatch:
-                    return CompareStrings(incomingValue, existingValue);
+                case MatchType.StringMatchUsingJaroDistance:
+                    return CompareStringsUsingJaro(incomingValue, existingValue);
 
                 case MatchType.DateMatch:
                     return CompareDates(incomingValue, existingValue);
@@ -166,7 +166,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             return 0;
         }
 
-        private static decimal CompareGenders(object incomingValue, object existingValue)
+        private static double CompareGenders(object incomingValue, object existingValue)
         {
             Contract.Requires(incomingValue != null & existingValue != null);
             var incomingGender = (GenderLookup) Enum.Parse(typeof (GenderLookup), incomingValue.ToString(), true);
@@ -174,18 +174,18 @@ namespace MasterPatientIndex.ProbabilisticMPI
             return incomingGender == existingGender ? 1 : 0;
         }
 
-        private static decimal CompareStrings(object incoming, object existing)
+        private static double CompareStringsUsingJaro(object incoming, object existing)
         {
             //if either value is empty, we can't determine match or non-match      
             var incomingStr = ((string) incoming);
             var existingStr = ((string) existing);
             if (string.IsNullOrEmpty(incomingStr) || string.IsNullOrEmpty(existingStr))
                 return 0;
-            //return Convert.ToDecimal(GetSimilarityFromDistance(incomingStr.ToUpper(), existingStr.ToUpper()));
-           return Convert.ToDecimal(incomingStr.JaroDistance(existingStr));
+            //return Convert.Todouble(GetSimilarityFromDistance(incomingStr.ToUpper(), existingStr.ToUpper()));
+           return Convert.ToDouble(incomingStr.JaroDistance(existingStr));
         }
         
-        private static decimal CompareDates(object incoming, object existing)
+        private static double CompareDates(object incoming, object existing)
         {
             DateTime incomingDate;
             DateTime existingDate;
@@ -223,7 +223,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
         }
 
 #if(false)
-        private static decimal GetSimilarityFromDistance(string incoming, string existing)
+        private static double GetSimilarityFromDistance(string incoming, string existing)
         {
             if ((incoming.Any(char.IsLetter) && !(existing.Any(char.IsLetter))) ||
                 (existing.Any(char.IsLetter) && !(incoming.Any(char.IsLetter))))
@@ -234,7 +234,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 return 1;
 
             var maxDistance = incoming.Length >= existing.Length ? incoming.Length : existing.Length;
-            var normalizedDistance = (decimal)distance / maxDistance;
+            var normalizedDistance = (double)distance / maxDistance;
             var similarity = 1 - normalizedDistance;
             return similarity;
         }
@@ -252,28 +252,28 @@ namespace MasterPatientIndex.ProbabilisticMPI
             // TODO: return vector.Aggregate(string.Empty, (current, ve) => current + $"{ve.Identifier}, {ve.Value}, {ve.Score}");
         }
 
-        public decimal TestJaroWinkler(string incoming, string existing)
+        public double TestJaroWinkler(string incoming, string existing)
         {
-            return Convert.ToDecimal(incoming.JaroDistance(existing)); 
+            return Convert.ToDouble(incoming.JaroDistance(existing)); 
         }
-        public decimal TestJaro(string incoming, string existing)
+        public double TestJaro(string incoming, string existing)
         {
-            return Convert.ToDecimal(incoming.JaroDistance(existing));
+            return Convert.ToDouble(incoming.JaroDistance(existing));
         }
 
 #if(false)
-        public decimal TestLevenshtein(string incoming, string existing)
+        public double TestLevenshtein(string incoming, string existing)
         {
-            return Convert.ToDecimal(incoming.LevenshteinDistance(existing));
+            return Convert.Todouble(incoming.LevenshteinDistance(existing));
         }
-        public decimal TestNormalizedLevenshtein(string incoming, string existing)
+        public double TestNormalizedLevenshtein(string incoming, string existing)
         {
             var distance = incoming.LevenshteinDistance(existing);
             if (distance == 0) return 1;
             var hammingDistance = incoming.HammingDistance(existing);
             var distanceNormalized = distance/hammingDistance;
             var similarity = 1 - distanceNormalized;
-            return Convert.ToDecimal(similarity);
+            return Convert.Todouble(similarity);
         }
 #endif
     }
@@ -281,8 +281,8 @@ namespace MasterPatientIndex.ProbabilisticMPI
     public class MPIIdentifierWeight
     {
         public string Identifier { get; set; }
-        public decimal MatchWeight { get; set; }
-        public decimal NonMatchWeight { get; set; }
+        public double MatchWeight { get; set; }
+        public double NonMatchWeight { get; set; }
     } 
  
 }

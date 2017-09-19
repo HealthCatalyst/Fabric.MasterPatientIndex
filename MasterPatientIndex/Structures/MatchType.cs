@@ -2,7 +2,7 @@ namespace MasterPatientIndex.Structures
 {
     public enum MatchType
     {
-        StringMatch,
+        StringMatchUsingJaroDistance,
         DateMatch,
         GenderMatch
     }

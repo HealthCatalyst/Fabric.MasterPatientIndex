@@ -4,8 +4,8 @@ namespace MasterPatientIndex.ProbabilisticMPI
 {
     public interface IMpiConfiguration
     {
-        decimal HighConfidenceMatchThreshold { get; }
-        decimal MediumConfidenceMatchThreshold { get; }
+        double HighConfidenceMatchThreshold { get; }
+        double MediumConfidenceMatchThreshold { get; }
         int StringKeyLength { get; }
         Dictionary<string, MPIIdentifierWeight> IdentifierMatchWeights { get; }
 

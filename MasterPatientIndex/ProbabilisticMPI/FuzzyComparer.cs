@@ -9,6 +9,12 @@ namespace MasterPatientIndex.ProbabilisticMPI
         private const int MNumChars = 4;
 
         //http://buddydroid.com/jarowinkler-distance-c-implementation/
+        // https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
+        // The lower the Jaro–Winkler distance for two strings is, the more similar the strings are. 
+        // The score is normalized such that 1 equates to no similarity and 0 is an exact match. 
+        // The Jaro–Winkler similarity is given by 1 − Jaro–Winkler distance.
+
+        // comparison of algorithms: http://users.cecs.anu.edu.au/~Peter.Christen/publications/tr-cs-06-02.pdf
 
         public static double JaroDistance(this string strA, string strB)
         {
@@ -64,6 +70,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
 
             return lWeight;
 
+            // Jaro–Winkler distance uses a prefix scale p which gives more favourable ratings to strings that match from the beginning for a set prefix length
             /* EQ:  winkler portion, don't need this
             if (lWeight <= MWeightThreshold) return lWeight;
             int lMax = Math.Min(MNumChars, Math.Min(aString1.Length, aString2.Length));
@@ -76,6 +83,6 @@ namespace MasterPatientIndex.ProbabilisticMPI
              * */
 
         }
-  
+
     }
 }

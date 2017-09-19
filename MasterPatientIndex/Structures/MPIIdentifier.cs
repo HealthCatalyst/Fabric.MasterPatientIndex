@@ -6,7 +6,7 @@ namespace MasterPatientIndex.Structures
         public MatchType MatchType { get; set; }
 
         public object Value  { get; set; }
-        public decimal Score  { get; set; }
+        public double Score  { get; set; }
 
         public bool IsBlockCandidate { get; set; }
 
