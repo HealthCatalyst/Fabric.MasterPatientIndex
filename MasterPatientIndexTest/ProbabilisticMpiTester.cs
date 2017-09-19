@@ -27,7 +27,7 @@ namespace MasterPatientIndexTest
                 FirstName = "Mark"
             });
 
-            var probabilisticMpiCache = new ProbabilisticMpiCache(mockPatientStore);
+            var probabilisticMpiCache = new ProbabilisticMpiCache(mockPatientStore, new MpiConfiguration());
 
             var testPatient = new MockPatient
             {
@@ -93,4 +93,13 @@ namespace MasterPatientIndexTest
             };
         }
     }
+
+    public class MpiConfiguration : IMpiConfiguration
+    {
+        public decimal HighConfidenceMatchThreshold => (decimal)1.00;
+        public decimal MediumConfidenceMatchThreshold => (decimal)0.50;
+        public int StringKeyLength => 3;
+        public Dictionary<string, MPIIdentifierWeight> IdentifierMatchWeights => new Dictionary<string, MPIIdentifierWeight>();
+    }
+
 }

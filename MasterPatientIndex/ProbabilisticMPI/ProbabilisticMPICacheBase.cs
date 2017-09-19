@@ -7,13 +7,13 @@ namespace MasterPatientIndex.ProbabilisticMPI
     public abstract class ProbabilisticMpiCacheBase
     {
         private readonly MatchEngine _matchEngine;
-        private readonly ConfigurationEngine _configurationEngine;
+        private readonly IMpiConfiguration _configuration;
         private readonly IPatientStore _patientStore;
 
-        protected ProbabilisticMpiCacheBase(IPatientStore store)
+        protected ProbabilisticMpiCacheBase(IPatientStore store, IMpiConfiguration configuration)
         {
-            _configurationEngine = new ConfigurationEngine();
-            _matchEngine = new MatchEngine(_configurationEngine);
+            _configuration = configuration;
+            _matchEngine = new MatchEngine(configuration);
             _patientStore = store;
         }
 
@@ -40,7 +40,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             var lastName = nameIdentifier != null ? nameIdentifier.Value.ToString() : string.Empty;
 
             //if lastname in search vector is shorter than key, use all characters 
-            var searchKey  = lastName.Length < ConfigurationEngine.StringKeyLength ? lastName : lastName.Substring(0, ConfigurationEngine.StringKeyLength);
+            var searchKey  = lastName.Length < _configuration.StringKeyLength ? lastName : lastName.Substring(0, _configuration.StringKeyLength);
             var candidateIds = _patientStore.LookupPatientsByPartialName(searchKey).ToList();
 
             return _patientStore.GetMasterPatientIndexRecordsForListOfPatients(candidateIds).ToList();

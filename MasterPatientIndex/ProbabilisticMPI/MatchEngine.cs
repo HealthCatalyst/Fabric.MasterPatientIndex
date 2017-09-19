@@ -12,13 +12,13 @@ namespace MasterPatientIndex.ProbabilisticMPI
 {
     public class MatchEngine
     {
-        private static ConfigurationEngine _mpiConfiguration;
+        private static IMpiConfiguration _mpiConfiguration;
         private readonly bool _mpiTraceEnabled = false;
         protected static readonly Logger Logger = new LoggerConfiguration().CreateLogger();
         protected static readonly Logger MPIMatchLogger = new LoggerConfiguration().CreateLogger(/*"MPIMatchLogger"*/);
         protected static readonly Logger MPINoMatchLogger = new LoggerConfiguration().CreateLogger(/*"MPINoMatchLogger"*/);
 
-        public MatchEngine(ConfigurationEngine configurationEngine)
+        public MatchEngine(IMpiConfiguration configurationEngine)
         {
             _mpiConfiguration = configurationEngine;
         }
@@ -203,9 +203,9 @@ namespace MasterPatientIndex.ProbabilisticMPI
             var updatedResults = matchResults;
             foreach (var matchRecord in updatedResults)
             {
-                if (matchRecord.TotalMatchScore > ConfigurationEngine.HighConfidenceMatchThreshold)
+                if (matchRecord.TotalMatchScore > _mpiConfiguration.HighConfidenceMatchThreshold)
                     matchRecord.MatchConfidenceLevel = MPIConfidenceLevelLookup.High;
-                else if (matchRecord.TotalMatchScore > ConfigurationEngine.MediumConfidenceMatchThreshold)
+                else if (matchRecord.TotalMatchScore > _mpiConfiguration.MediumConfidenceMatchThreshold)
                     matchRecord.MatchConfidenceLevel = MPIConfidenceLevelLookup.Medium;
                 else matchRecord.MatchConfidenceLevel = MPIConfidenceLevelLookup.Low;
             }
