@@ -22,7 +22,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
             _mpiConfiguration = configurationEngine;
         }
 
-        public List<MPIMatchRecord> FindMatches (List<MPIIdentifier> searchVector, IList<MasterPatientIndexItem> candidates)
+        public List<MPIMatchRecord> FindMatches (SearchVector searchVector, IList<MasterPatientIndexItem> candidates)
         {
             if (_mpiTraceEnabled) MPIMatchLogger.Verbose("Compared {0} candidates to {1}", candidates.Count, Describe(searchVector));
 
@@ -67,14 +67,14 @@ namespace MasterPatientIndex.ProbabilisticMPI
             return matchResults;
         }
 
-        private static MPIMatchRecord GetCandidateMatchRecord(IEnumerable<MPIIdentifier> searchVector, MasterPatientIndexItem candidate)
+        private static MPIMatchRecord GetCandidateMatchRecord(SearchVector searchVector, MasterPatientIndexItem candidate)
         {
             //get list of identifier values for candidate
             var candidateVector = MasterPatientIndexItem.ToVector(candidate);
          
             //compare every element search vector to corresponding element in candidate vector
-            var candidateMatchScores = searchVector.Select(sve =>
-                GetIdentifierScore(sve, candidateVector.FirstOrDefault(cve => cve.Identifier == sve.Identifier)))
+            var candidateMatchScores = searchVector.Identifiers.Select(sve =>
+                GetIdentifierScore(sve, candidateVector.FirstOrDefault(cve => cve.IdentifierType == sve.IdentifierType)))
                 .ToList();
             return new MPIMatchRecord
             {
@@ -92,19 +92,26 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 //can't compare so return 0 (identifier has no bearing on match score)
                 return new MPIIdentifier
                 {
-                    Identifier = existing.Identifier,
+                    IdentifierType = existing.IdentifierType,
                     Score = 0,
                     Value = existing.Value,
                 };
             }
 
             //get weights for this identifier
-            var weightRecord = _mpiConfiguration.IdentifierMatchWeights.First(w => w.Key.Equals(incoming.Identifier)).Value;
+            //TODO: var weightRecord = _mpiConfiguration.IdentifierMatchWeights.First(w => w.Key.Equals(incoming.Identifier)).Value;
+            var weightRecord = new MPIIdentifierWeight
+            {
+                Identifier = incoming.IdentifierType.ToString(),
+                MatchWeight = 1,
+                NonMatchWeight = -1,
+            };
+
             //default to no match
             decimal identifierScore;
 
             //use fuzzy matching to determine how similar search vector is to candidate vector
-            var similarityScore = GetSimilarityScore(incoming.Identifier, incoming, existing);
+            var similarityScore = GetSimilarityScore(incoming.IdentifierType, incoming, existing);
             if (similarityScore == 0)
             {
                 identifierScore = weightRecord.NonMatchWeight;
@@ -121,7 +128,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
 
             return new MPIIdentifier
             {
-                Identifier = existing.Identifier,
+                IdentifierType = existing.IdentifierType,
                 Value = existing.Value,
                 Score = identifierScore
             };
@@ -239,7 +246,13 @@ namespace MasterPatientIndex.ProbabilisticMPI
         }
 #endif
 
-        private static string Describe(IEnumerable<MPIIdentifier> vector)
+        private object Describe(List<MPIIdentifier> hmMatchVector)
+        {
+            return string.Empty;
+        }
+
+
+        private static string Describe(SearchVector vector)
         {
             return string.Empty;
             // TODO: return vector.Aggregate(string.Empty, (current, ve) => current + $"{ve.Identifier}, {ve.Value}, {ve.Score}");

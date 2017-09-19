@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace MasterPatientIndex.ProbabilisticMPI
@@ -8,15 +7,17 @@ namespace MasterPatientIndex.ProbabilisticMPI
     {
         private readonly MatchEngine _matchEngine;
         private readonly ConfigurationEngine _configurationEngine;
-        
-        protected ProbabilisticMpiCacheBase()
+        private readonly IPatientStore _patientStore;
+
+        protected ProbabilisticMpiCacheBase(IPatientStore store)
         {
             _configurationEngine = new ConfigurationEngine();
             _matchEngine = new MatchEngine(_configurationEngine);
+            _patientStore = store;
         }
 
         
-        public IList<MPIMatchRecord> GetProbabilisticMatches (List<MPIIdentifier> searchVector)
+        public IList<MPIMatchRecord> GetProbabilisticMatches (SearchVector searchVector)
         {
             //get subset of patients to match against 
             var profileCandidates = GetCandidateBlock(searchVector);
@@ -26,7 +27,7 @@ namespace MasterPatientIndex.ProbabilisticMPI
                 : new List<MPIMatchRecord>();
         }
      
-        public IList<MasterPatientIndexItem> GetCandidateBlock(List<MPIIdentifier> searchVector)
+        public IList<MasterPatientIndexItem> GetCandidateBlock(SearchVector searchVector)
         {
             //TODO: use redis intersect functionality to combine blocking identifiers? 
             //do we even want to intersect the blocking criteria?  may make more sense
@@ -34,16 +35,15 @@ namespace MasterPatientIndex.ProbabilisticMPI
             //intersecting the blocking criteria might be too restrictive
             //for now, assume blocking on lastname only
             
-            var nameIdentifier = searchVector.FirstOrDefault(v => v.Identifier == MPIIdentifierLookup.LastName);
+            var nameIdentifier = searchVector.GetIdentifierByType(MPIIdentifierLookup.LastName);
             var lastName = nameIdentifier != null ? nameIdentifier.Value.ToString() : string.Empty;
 
             //if lastname in search vector is shorter than key, use all characters 
             var searchKey  = lastName.Length < ConfigurationEngine.StringKeyLength ? lastName : lastName.Substring(0, ConfigurationEngine.StringKeyLength);
-            //var candidateIds = LookupPatientsByPartialName(searchKey).ToList();
+            var candidateIds = _patientStore.LookupPatientsByPartialName(searchKey).ToList();
 
-            //return GetMasterPatientIndexRecordsForListOfPatients(candidateIds).ToList();
+            return _patientStore.GetMasterPatientIndexRecordsForListOfPatients(candidateIds).ToList();
 
-            return null;
         }
 
     }

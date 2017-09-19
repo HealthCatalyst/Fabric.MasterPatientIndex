@@ -56,18 +56,18 @@ namespace MasterPatientIndex
         {
             var vector = new List<MPIIdentifier>
             {
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.UniversalId, Value = item.UniversalId},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.SSN, Value = item.SSN},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.MRN, Value = item.SourceMedicalRecordId},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.InsuranceId, Value = item.InsuranceId},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.UniversalId, Value = item.UniversalId},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.SSN, Value = item.SSN},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.MRN, Value = item.SourceMedicalRecordId},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.InsuranceId, Value = item.InsuranceId},
                 //new MPIIdentifier {Identifier = MPIIdentifierLookup.FacilityId, Value = item.FacilityId},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.LastName, Value = item.LastName},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.FirstName, Value = item.FirstName},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.Gender, Value = item.Gender.ToString()},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.DateOfBirth, Value = item.DOB},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.City, Value = item.City},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.State, Value = item.State},
-                new MPIIdentifier {Identifier = MPIIdentifierLookup.PostalCode, Value = item.PostalCode},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.LastName, Value = item.LastName},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.FirstName, Value = item.FirstName},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.Gender, Value = item.Gender.ToString()},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.DateOfBirth, Value = item.DOB},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.City, Value = item.City},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.State, Value = item.State},
+                new MPIIdentifier {IdentifierType = MPIIdentifierLookup.PostalCode, Value = item.PostalCode},
             };
             return vector;
         };
@@ -104,7 +104,7 @@ namespace MasterPatientIndex
 
     public class MPIIdentifier
     {
-        public MPIIdentifierLookup Identifier { get; set; }
+        public MPIIdentifierLookup IdentifierType { get; set; }
         public object Value  { get; set; }
         public decimal Score  { get; set; }
 

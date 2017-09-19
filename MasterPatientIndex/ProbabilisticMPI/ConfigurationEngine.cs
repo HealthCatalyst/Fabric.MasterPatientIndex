@@ -16,9 +16,9 @@ namespace MasterPatientIndex.ProbabilisticMPI
         private const string MPIResourcesNamespace = "MasterPatientIndex.Resources";
         private const string IdentifierMatchWeightsFile = "IdentifierMatchWeights.csv";
 
-        public readonly Dictionary<MPIIdentifierLookup, MPIIdentifierWeight> IdentifierMatchWeights =
+        private readonly Dictionary<MPIIdentifierLookup, MPIIdentifierWeight> IdentifierMatchWeights =
             new Dictionary<MPIIdentifierLookup, MPIIdentifierWeight>();
-        public readonly List<KeyValuePair<MPIIdentifierLookup, MPIIdentifierWeight>> BlockingIdentifiers;
+        private readonly List<KeyValuePair<MPIIdentifierLookup, MPIIdentifierWeight>> BlockingIdentifiers;
 
         public ConfigurationEngine()
         {
@@ -27,6 +27,11 @@ namespace MasterPatientIndex.ProbabilisticMPI
         }
 
         private void LoadIdentifierMatchWeights()
+        {
+            
+        }
+
+        private void LoadIdentifierMatchWeightsReal()
         {
             //http://en.wikipedia.org/wiki/Record_linkage
             //Formula used to calculate match/non-match weights for identifiers:  (example: birth month)
